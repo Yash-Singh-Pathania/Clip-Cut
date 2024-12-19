@@ -9,7 +9,7 @@ First, ensure you are working in a virtual environment.
 ```bash
 $ cd audio
 $ python3 -m venv .venv
-source .venv/bin/activate
+$ source .venv/bin/activate
 ```
 
 Then, install necessary dependencies.
