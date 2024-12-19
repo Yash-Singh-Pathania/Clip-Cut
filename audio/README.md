@@ -27,7 +27,7 @@ $ deactivate && source .venv/bin/activate
 ## Running
 
 ```bash
-fastapi dev service/main.py
+$ fastapi dev service/main.py
 ```
 
 Visit [127.0.0.1:8000/docs#/](http://127.0.0.1:8000/docs#/) for Swagger UI.
