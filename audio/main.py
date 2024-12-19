@@ -10,10 +10,10 @@ app = FastAPI()
 pipeline = transformers.pipeline(TASK, MODEL, device=1)
 transcriptions: Dict[str, str] = {}
 
-@app.get('/transcriptions/{id}')
-async def get_transcription(id: str):
-    if id in transcriptions:
-        return {'transcription': transcriptions[id]}
+@app.get('/transcriptions/{transcription_id}')
+async def get_transcription(transcription_id: str):
+    if transcription_id in transcriptions:
+        return {'transcription': transcriptions[transcription_id]}
     
     raise HTTPException(status_code=404, detail='id not found')
 
