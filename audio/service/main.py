@@ -29,7 +29,7 @@ async def get_transcription(transcription_id: str) -> List[Transcription]:
     raise HTTPException(status_code=404, detail='id not found')
 
 @app.post('/transcriptions/')
-async def create_transcription(audiofile_url: str) -> str:
+async def create_transcription(audiofile_url: str, transcription_id: str) -> str:
     response = requests.get(audiofile_url)
     if response.status_code != 200:
         raise HTTPException(status_code=400, detail="Couldn't retrieve audio from provided url")
@@ -46,15 +46,14 @@ async def create_transcription(audiofile_url: str) -> str:
         transcription = pipeline(audiofile_path, return_timestamps=True)['chunks']
     except Exception as e:
         raise HTTPException(status_code=500, detail='Failed to perform transcription: ' + e)
-
-    transcription_id = str(len(transcriptions))
+    
     transcriptions[transcription_id] = [
         Transcription(
             timestamp=Timestamp(start=t['timestamp'][0], end=t['timestamp'][1]),
-            text=t['text']
+            text=t['text'].strip()
         )
         for t in transcription
     ]
 
-    os.remove(audiofile_path)
+    os.remove(audiofile_path)    
     return transcription_id

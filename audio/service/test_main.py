@@ -19,15 +19,16 @@ def test_transcriptions():
         "A stuffed chair slipped from the moving van. Open your book to the first page.",
     ]
 
-    for url in urls:
-        response = client.post(f'/transcriptions?audiofile_url={url}')
+    for i, url in enumerate(urls):
+        response = client.post(f'/transcriptions?audiofile_url={url}&transcription_id={i}')
         assert response.status_code == 200
     
     for i in range(4):
         transcription_id = str(i)
         response = client.get(f'/transcriptions/{transcription_id}')
         assert response.status_code == 200
-        prediction = ''.join(t['text'] for t in response.json())
+        prediction = ' '.join(t['text'] for t in response.json())
+        # ensure 95% accuracy
         assert wer(transcriptions[i], prediction) <= 0.05
 
 
@@ -40,23 +41,23 @@ def wer(reference: str, prediction: str) -> float:
     m = len(hyp_words)
     
     # Create a (n+1) x (m+1) matrix
-    dp = np.zeros((n+1, m+1), dtype=np.int32)
+    dp = np.zeros((n + 1, m + 1), dtype=np.int32)
     
     # Initialize the matrix
-    for i in range(n+1):
+    for i in range(n + 1):
         dp[i][0] = i  # Deletion cost
-    for j in range(m+1):
+    for j in range(m + 1):
         dp[0][j] = j  # Insertion cost
     
     # Fill the matrix
-    for i in range(1, n+1):
-        for j in range(1, m+1):
-            if ref_words[i-1] == hyp_words[j-1]:
-                dp[i][j] = dp[i-1][j-1]  # No error
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            if ref_words[i - 1] == hyp_words[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1]  # No error
             else:
-                substitution = dp[i-1][j-1] + 1
-                insertion = dp[i][j-1] + 1
-                deletion = dp[i-1][j] + 1
+                substitution = dp[i - 1][j - 1] + 1
+                insertion = dp[i][j - 1] + 1
+                deletion = dp[i - 1][j] + 1
                 dp[i][j] = min(substitution, insertion, deletion)
     
     # The edit distance
