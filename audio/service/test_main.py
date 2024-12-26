@@ -20,16 +20,19 @@ def test_transcriptions():
     ]
 
     for i, url in enumerate(urls):
-        response = client.post(f'/transcriptions?audiofile_url={url}&transcription_id={i}')
+        response = client.post(f'/audio?audiofile_url={url}&video_id={i}')
         assert response.status_code == 200
     
     for i in range(4):
-        transcription_id = str(i)
-        response = client.get(f'/transcriptions/{transcription_id}')
+        video_id = str(i)
+        response = client.get(f'/audio/transcription/{video_id}')
         assert response.status_code == 200
         prediction = ' '.join(t['text'] for t in response.json())
         # ensure 95% accuracy
         assert wer(transcriptions[i], prediction) <= 0.05
+
+        response = client.get(f'/audio/audiofile/{video_id}')
+        assert response.status_code == 200
 
 
 def wer(reference: str, prediction: str) -> float:
