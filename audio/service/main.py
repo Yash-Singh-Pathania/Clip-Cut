@@ -1,12 +1,19 @@
 import json
 import os
+from typing import List
 
 import aiofiles
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi.responses import StreamingResponse
+from pydantic import BaseModel
 from pydub import AudioSegment
 import requests
 import transformers
+
+
+class TranscriptionModel(BaseModel):
+    timestamp: List[float]
+    text: str
 
 
 TASK = "automatic-speech-recognition"
@@ -56,18 +63,10 @@ async def get_audio(user_id: str, video_id: str, lang: str):
     return StreamingResponse(stream_mp3(file_path), headers=headers)
 
 
-@app.get(
-    "/audio/transcription/{user_id}/{video_id}/{lang}",
-    response_class=JSONResponse,
-    responses={
-        200: {
-            "content": {
-                "application/json": [{"timestamp": [0.0, 0.0], "text": "string"}]
-            }
-        }
-    },
-)
-async def get_transcription(user_id: str, video_id: str, lang: str):
+@app.get("/audio/transcription/{user_id}/{video_id}/{lang}")
+async def get_transcription(
+    user_id: str, video_id: str, lang: str
+) -> List[TranscriptionModel]:
     transcription_path = os.path.join(
         "./localstorage", user_id, video_id, "transcription", lang + ".json"
     )
