@@ -86,3 +86,6 @@ Also in the same virtual environment:
 ```bash
 $ pytest
 ```
+
+uuid(user)/vid(video id )/audio/(languages)
+uuid(user)/vid(video id )/transcription/.txt (english)
