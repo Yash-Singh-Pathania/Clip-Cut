@@ -171,4 +171,7 @@ cython_debug/
 .pypirc
 
 # Service stored data
-audiofiles/
+localstorage/
+
+# MacOS
+*.DS_Store

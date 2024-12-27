@@ -19,19 +19,21 @@ def test_transcriptions():
         "A stuffed chair slipped from the moving van. Open your book to the first page.",
     ]
 
+    user_id = '6969'
+
     for i, url in enumerate(urls):
-        response = client.post(f'/audio?audiofile_url={url}&video_id={i}')
+        response = client.post(f'/audio?audiofile_url={url}&user_id={user_id}&video_id={i}')
         assert response.status_code == 200
     
     for i in range(4):
         video_id = str(i)
-        response = client.get(f'/audio/transcription/{video_id}')
+        response = client.get(f'/audio/transcription/{user_id}/{video_id}/en')
         assert response.status_code == 200
         prediction = ' '.join(t['text'] for t in response.json())
         # ensure 95% accuracy
         assert wer(transcriptions[i], prediction) <= 0.05
 
-        response = client.get(f'/audio/audiofile/{video_id}')
+        response = client.get(f'/audio/audio/{user_id}/{video_id}/en')
         assert response.status_code == 200
 
 
