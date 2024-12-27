@@ -1,14 +1,14 @@
-from fastapi import FastAPI, HTTPException
 import os
-from pydantic import BaseModel
-import requests
-import transformers
 from typing import Dict, List
 
-TASK = 'automatic-speech-recognition'
-MODEL = 'openai/whisper-base.en'
+import aiofiles
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import StreamingResponse
+from pydantic import BaseModel
+from pydub import AudioSegment
+import requests
+import transformers
 
-app = FastAPI()
 
 class Timestamp(BaseModel):
     start: float
@@ -18,36 +18,82 @@ class Transcription(BaseModel):
     timestamp: Timestamp
     text: str
 
-pipeline = transformers.pipeline(TASK, MODEL, chunk_length_s=30, device=1)
-transcriptions: Dict[str, List[Transcription]] = {}
 
-@app.get('/transcriptions/{transcription_id}')
-async def get_transcription(transcription_id: str) -> List[Transcription]:
-    if transcription_id in transcriptions:
-        return transcriptions[transcription_id]
+TASK = 'automatic-speech-recognition'
+MODEL = 'openai/whisper-base.en'
+
+
+transcriptions: Dict[str, List[Transcription]] = {}
+app = FastAPI()
+try:
+    pipeline = transformers.pipeline(TASK, MODEL, chunk_length_s=30, device=0)
+except:
+    pipeline = transformers.pipeline(TASK, MODEL, chunk_length_s=30)
+
+
+async def stream_mp3(file_path: str):
+    chunk_size = 1024
+    async with aiofiles.open(file_path, mode='rb') as audio_file:
+        while chunk := await audio_file.read(chunk_size):
+            yield chunk
+
+
+@app.get('/audio/audiofile/{video_id}', response_class=StreamingResponse, responses={
+    200: {
+        'content': {
+            'audio/mpeg': {}
+        },
+        'description': 'MP3 audio file stream',
+    },
+})
+async def get_audio(video_id: str):
+    file_path = os.path.join('./audiofiles', video_id + '.mp3')
+    if not os.path.isfile(file_path):
+        raise HTTPException(status_code=404, detail='No audio found with the provided video ID')
+
+    headers = {
+        'Content-Type': 'audio/mpeg',
+        'Accept-Ranges': 'bytes'
+    }
+
+    return StreamingResponse(stream_mp3(file_path), headers=headers)
+
+
+@app.get('/audio/transcription/{video_id}')
+async def get_transcription(video_id: str) -> List[Transcription]:
+    if video_id in transcriptions:
+        return transcriptions[video_id]
     
     raise HTTPException(status_code=404, detail='id not found')
 
-@app.post('/transcriptions/')
-async def create_transcription(audiofile_url: str, transcription_id: str) -> str:
+
+@app.post('/audio/')
+async def process_audio(audiofile_url: str, video_id: str) -> str:
     response = requests.get(audiofile_url)
     if response.status_code != 200:
         raise HTTPException(status_code=400, detail="Couldn't retrieve audio from provided url")
 
-    audiofile_path = audiofile_url[audiofile_url.rfind('/') + 1:]
+    if not os.path.isdir('./audiofiles'):
+        os.mkdir('./audiofiles')
+
+    temp_path = audiofile_url[audiofile_url.rfind('/') + 1:]
+    audiofile_path = os.path.join('./audiofiles', video_id + '.mp3')
 
     try:
-        with open(audiofile_path, 'wb') as audiofile:
-            audiofile.write(response.content)
+        with open(temp_path, 'wb') as temp_file:
+            temp_file.write(response.content)
+
+        temp_audio = AudioSegment.from_file(temp_path)
+        temp_audio.export(audiofile_path, format='mp3')
     except:
         raise HTTPException(status_code=500, detail='Failed to save temporary audio file')
     
     try:
         transcription = pipeline(audiofile_path, return_timestamps=True)['chunks']
-    except Exception as e:
-        raise HTTPException(status_code=500, detail='Failed to perform transcription: ' + e)
+    except:
+        raise HTTPException(status_code=500, detail='Failed to perform transcription')
     
-    transcriptions[transcription_id] = [
+    transcriptions[video_id] = [
         Transcription(
             timestamp=Timestamp(start=t['timestamp'][0], end=t['timestamp'][1]),
             text=t['text'].strip()
@@ -55,5 +101,6 @@ async def create_transcription(audiofile_url: str, transcription_id: str) -> str
         for t in transcription
     ]
 
-    os.remove(audiofile_path)    
-    return transcription_id
+    os.remove(temp_path)    
+    return video_id
+
