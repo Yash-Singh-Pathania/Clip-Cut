@@ -1,6 +1,5 @@
-FROM python:3
+FROM python:3.8
 
-RUN apt update
 RUN apt update && apt install -y ffmpeg
 
 COPY requirements.txt ./
