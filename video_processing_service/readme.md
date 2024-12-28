@@ -1,4 +1,4 @@
-1. Spliut audio to a queue ** note whatever the queu name is , is what the audio service listens to 
+1. Split audio to a queue ** note whatever the queu name is , is what the audio service listens to 
 2. Process Video 
     1. Make three qualities 
         1. 480p 
