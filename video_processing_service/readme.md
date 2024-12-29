@@ -1,3 +1,4 @@
+<<<<<<< video_processing_service/readme.md
 # Video Processing Service
 
 ## Overview
