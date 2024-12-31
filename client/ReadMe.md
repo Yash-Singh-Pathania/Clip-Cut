@@ -1,228 +1,141 @@
-## COMP41720 Distributed Systems
+## Client Service
+## Overview
+The Client Service enables users to submit video and audio file metadata (file paths) to the Broker Service. This metadata is then processed by the Broker Service, which interacts with RabbitMQ to enqueue the tasks for downstream processing services.
+The Client Service is designed to ensure seamless communication between the client (user) and the backend service.
+## Features
+1) Integration with the Broker Service:
+- Sends video and audio file metadata to the Broker Service via an HTTP POST request.
+- Ensures that input JSON is structured and correctly validated.
+2) Ease of Use:
+- Allows users to easily specify video and audio file paths.
+- Handles errors such as network issues, invalid input data, or inaccessible Broker Service.
+3) Simple Configuration:
+- Set the Broker Service URL via configuration.
+- Easily update and extend to handle additional metadata fields.
 
-### Client Service Project
+## Technologies Used
+Python 3.8+
+Requests: A lightweight HTTP library used for making API calls to the Broker Service.
 
----
+## Prerequisites
+Python: Ensure Python 3.8 or higher is installed. You can download Python Hyperlink removed for security reasons.
+Broker Service: Start the Broker Service before using the Client Service. Refer to the Hyperlink removed for security reasons for setup instructions.
 
-## Introduction
+## Installation
+Clone the Repository:
+```sh
+git clone <repo_url>
+cd client-service
+```
+Set Up Virtual Environment (Recommended): Create and activate a Python virtual environment:
+```sh
+python -m venv venv
+source venv/bin/activate     # For macOS/Linux
+venv\Scripts\activate        # For Windows
+```
+Install Dependencies: Install the required Python modules:
+```sh 
+pip install -r requirements.txt
+```
+## How to Run the Client Service
+Open the client_service.py file and edit the following line to specify the Broker Service URL:
 
-The **Client Service API** is a service designed to manage video uploads and streaming in distributed systems. Developed with **Spring Boot**, this microservice provides seamless integration for file storage, video metadata management, and retrieval functionalities. The Client Service is built to operate efficiently in standalone environments, while also being capable of integrating with the **Broker Service API** for advanced distributed operations.
+```sh
+BROKER_SERVICE_URL = "http://localhost:5000/process"
+```
+Run the script:
+```sh
+python client_service.py
+```
+The script will submit sample metadata to the Broker Service, and you will see the console logs indicating the results.
 
-By leveraging **OpenAPI/Swagger** support for self-documenting APIs, developers can easily explore and utilize the Client Service. The API is designed to simplify integration, asset management, and overall system scalability in distributed environments.
-
-### Key Features
-
-- **Comprehensive File Management**:
-    - Handles video uploads, secure storage, and retrieval.
-    - Provides seamless streaming support for different video formats.
-
-- **Integrated OpenAPI Documentation**:
-    - Intuitive Swagger documentation generated with **SpringDoc OpenAPI**.
-    - Includes metadata such as API tags, licensing, and contacts for easy adoption.
-
-- **Environment Ready**:
-    - Preconfigured server settings for local, testing, and production deployments.
-
-- **Lightweight Design**:
-    - Built using **Java 8**, ensuring compatibility with older systems.
-
-This project simplifies distributed file and video management through a feature-rich and scalable architecture.
-
----
-
-## Project Structure
-client-service/
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   └── service/
-│   │   │       └── service.client/
-│   │   │           ├── ClientApplication.java        # Main entry point
-│   │   │           ├── ClientService.java            # Core logic for video uploads and streaming
-│   │   │           ├── controller/
-│   │   │           │   └── ClientController.java      # REST controller providing endpoints
-│   │   │           └── model/
-│   │   │               ├── VideoMetadata.java        # Metadata model
-│   │   │               └── UploadResponse.java       # Response model
-│   │   └── resources/
-│   │       ├── application.properties                # Configuration file
-│   └── test/
-│       ├── java/
-│       │   └── service/
-│       │       └── client/
-│       │           └── ClientServiceTests.java       # Unit and integration test cases
-├── target/                                            # Compiled application output after build
-├── pom.xml                                            # Maven configuration file
-├── Dockerfile                                         # Docker configuration file
-└── README.md                                          # Project documentation
-
-
----
-
-## Services
-
-The **Client Service API** provides the following key functionalities:
-
-1. **Video Upload and Storage**:
-    - Allows users to upload video files (e.g., `.mp4`) to the local file system.
-    - Automatically validates and sanitizes uploaded files for enhanced security.
-
-2. **Video Streaming**:
-    - Streams videos in byte arrays with configurable quality parameters.
-    - Supports the retrieval of video files via their unique IDs.
-
-3. **Metadata Registration**:
-    - Registers video metadata with the **Broker Service** or similar management systems.
-
-4. **API Documentation**:
-    - Fully documented endpoints accessible via the integrated Swagger UI.
-
-5. **OpenAPI Configuration**:
-    - Custom `OpenAPI` (via Spring Bean) to enable dynamic API metadata generation for various environments.
-
----
-
-## How to Use It
-
-### Prerequisites:
-- **Java 8** installed on your machine.
-- **Maven** for building and running the project.
-- A REST client, such as **Postman** or **cURL**, for interacting with the APIs.
-
-(Optional tools based on your needs):
-- **Docker** for containerized deployment.
-- Video player or viewer app (e.g., VLC Media Player) to test streamed video.
-
----
-
-### Steps to Setup and Run:
-
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd client-service
-   ```
-
-2. Compile and build the project:
-   ```bash
-   mvn clean install
-   ```
-
-3. Run the Client Service:
-   ```bash
-   mvn spring-boot:run
-   ```
-
-4. Access the API at:
-    - Main URL: `http://localhost:8081`
-    - Swagger UI documentation: `http://localhost:8081/swagger-ui/index.html`
-
----
-
-## REST Endpoints
-
-### **Video Management**
-
-#### 1. **POST** `/videos/upload`
-- Uploads a video file to the local storage and registers it with metadata.
-- **Payload Example (Multipart Form Data)**:
-  ```json
-  {
-      "file": "<video-file>"
-  }
-  ```
-- **Response Example**:
-  ```json
-  {
-      "videoId": "f53a1ebd-d132-42dc-8c1f-ba8f5d1d5d15",
-      "message": "Video uploaded and registered successfully"
-  }
-  ```
-
----
-
-#### 2. **GET** `/videos/stream/{videoId}`
-- Streams the video file corresponding to the unique `videoId`.
-- **Path Parameters**:
-    - `videoId`: The unique identifier for the video.
-- **Response**:
-    - Returns video data as a byte stream.
-
----
-
-#### 3. **POST** `/metadata/register`
-- (Optional) Registers video metadata with the Broker Service.
-
----
-
-## Testing the Services
-
-Use any REST API testing tool like **Postman** or **cURL** to test the endpoints:
-
-- Example for video upload:
-   ```bash
-   curl -X POST http://localhost:8081/videos/upload \
-   -F "file=@path/to/video.mp4" \
-   -H "Content-Type: multipart/form-data"
-   ```
-
-- Example for streaming a video:
-   ```bash
-   curl -X GET http://localhost:8081/videos/stream/{videoId} \
-   -o downloaded_video.mp4
-   ```
-
----
-
-## Docker Deployment
-
-### Dockerfile
-
-The Client Service includes a `Dockerfile` for containerization:
-
-```dockerfile
-# Use an official Java runtime as a parent image
-FROM openjdk:8-jdk-alpine
-
-# Set the working directory
-WORKDIR /app
-
-# Copy the application JAR file into the container
-COPY target/client-service-0.0.1-SNAPSHOT.jar client.jar
-
-# Expose port 8081 for the Client Service
-EXPOSE 8081
-
-# Command to run the application
-ENTRYPOINT ["java", "-jar", "client.jar"]
+## How to Use the Client Service
+Modify File Paths: Update the file paths in the client_service.py script to point to the correct locations of your video and audio files:
+```sh
+video_file = "/path/to/video/file.mp4"
+audio_file = "/path/to/audio/file.mp3"
 ```
 
----
+- Send Request to Broker Service: When you run the script, the Client Service will:
+Validate the file paths in its payload.
+Send a POST request to the Broker Service by default to:
+```sh
+http://localhost:5000/process
+```
+Example Output: On successful execution, you should see:
+[Client] Sending request to Broker Service...
+[Client] Successfully sent data to Broker Service!
+[Client] Response: {"message": "Data received and published to RabbitMQ."}
 
-### Running the Docker Container
+If there are any issues, the script will print an appropriate error message.
+## Configuration
+- You can configure the following in client_service.py:
+Broker Service URL: Default:
+```sh
+BROKER_SERVICE_URL = "http://localhost:5000/process"
+```
+Change it to the hostname or IP address where the Broker Service is running, if not on the default localhost.
 
-To build and run the Docker container for the Client Service:
+- Video and Audio Files: Update these variables with the paths to your files:
+```sh
+video_file = "/path/to/video/file.mp4"
+audio_file = "/path/to/audio/file.mp3"
+```
+## Error Handling
+- Network-Related Errors:
+If the Broker Service is unreachable, the script will print an error:
+[Client] Error occurred: ConnectionError or Timeout  
 
-1. Build the Docker image:
-   ```bash
-   docker build -t client-service .
-   ```
+- Invalid Response:
+If the Broker Service returns an error (e.g., invalid request), the error will be logged:
+[Client] Failed to send data. HTTP 400: {"error": "..."}
 
-2. Run the Docker container:
-   ```bash
-   docker run -p 8081:8081 client-service
-   ```
+-File Path Errors:
+Ensure that the file paths you provide are accessible to prevent workflow disruptions.
 
-3. Access the Client Service at `http://localhost:8081/swagger-ui/index.html`.
+## Directory Structure
+The directory for the Client Service should look like this:
+client-service/
+├── client_service.py      # The Client Service code
+├── requirements.txt       # Python dependencies
+└── README.md              # This documentation
 
----
+## Example Interaction with Broker Service
+Request Sent (By Client Service):
+```sh
+{
+    "video_file_path": "/path/to/video/file.mp4",
+    "audio_file_path": "/path/to/audio/file.mp3"
+}
+```
+- Response Received (From Broker Service)
 
-## Conclusion
+```sh
+{
+    "message": "Data received and published to RabbitMQ."
+}
+```
+## Testing the Client Service
+Run the Script: Execute the Client Service script with default or modified configurations:
+```sh
+python client_service.py
+```
+- Verify Broker Logs: Check the Broker Service logs to ensure the data was received and queued into RabbitMQ.
+Inspect RabbitMQ: Use the RabbitMQ Management UI at Hyperlink removed for security reasons to confirm the message was queued in video-processing-pipeline.
 
-The Client Service API provides a flexible and lightweight solution for video management in distributed systems. By consolidating file handling, metadata registration, and video streaming, the Client Service empowers developers to build robust distributed applications.
+## Future Enhancements
+Add support for uploading additional metadata along with video/audio paths.
+Extend scripts to allow direct file uploads (instead of paths).
+Implement retries for failed requests based on HTTP response codes.
 
-This API is designed with modularity and efficiency, making it a reliable choice for distributed systems requiring video storage and management capabilities.
+## Contributing
+- We welcome contributions to improve the Client Service.
+- Steps to Contribute:
+- Fork the repo.
+- Create a branch (feature-xyz).
+- Add your feature or fix.
+- Submit a pull request for review.
 
 ## Contact
 
-For any queries or feedback, please contact [sinem.taskin@ucdconnect.ie].
+For any queries or issues, please contact [sinem.taskin@ucdconnect.ie].
