@@ -97,9 +97,3 @@ def stream_video(user_id: str, video_id: str, quality: str, lang: str) -> Stream
     return StreamingResponse(
         merge_streams(video_url, audio_url, transcription_url), media_type="video/mp4"
     )
-
-
-if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(app, port=10000)

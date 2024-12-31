@@ -114,9 +114,3 @@ async def process_audio(audiofile_url: str, user_id: str, video_id: str) -> str:
         with open(transcription_path, "w") as f:
             f.write(json.dumps(transcription))
         return video_id
-
-
-if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(app, port=9000)
