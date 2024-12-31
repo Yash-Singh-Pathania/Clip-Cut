@@ -1,5 +1,6 @@
 import json
 import os
+import tempfile
 from typing import List
 
 import aiofiles
@@ -101,18 +102,21 @@ async def process_audio(audiofile_url: str, user_id: str, video_id: str) -> str:
     if not os.path.isdir(transcription_folder):
         os.makedirs(transcription_folder)
 
-    temp_path = audiofile_url[audiofile_url.rfind("/") + 1 :]
     audiofile_path = os.path.join(audio_folder, "en.mp3")
     transcription_path = os.path.join(transcription_folder, "en.json")
 
-    with open(temp_path, "wb") as temp_file:
+    with tempfile.NamedTemporaryFile() as temp_file:
         temp_file.write(response.content)
+        temp_audio = AudioSegment.from_file(temp_file.name)
+        temp_audio.export(audiofile_path, format="mp3")
 
-    temp_audio = AudioSegment.from_file(temp_path)
-    temp_audio.export(audiofile_path, format="mp3")
+        transcription = pipeline(audiofile_path, return_timestamps=True)["chunks"]
+        with open(transcription_path, "w") as f:
+            f.write(json.dumps(transcription))
+        return video_id
 
-    transcription = pipeline(audiofile_path, return_timestamps=True)["chunks"]
-    with open(transcription_path, "w") as f:
-        f.write(json.dumps(transcription))
-    os.remove(temp_path)
-    return video_id
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, port=9000)
