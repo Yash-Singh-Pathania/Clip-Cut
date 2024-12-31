@@ -11,10 +11,7 @@ Get the transcription stored at the given ID from the given user with the given 
 ```json
 [
   {
-    "timestamp": {
-      "start": 0,
-      "end": 0
-    },
+    "timestamp": [0.0, 0.0],
     "text": "string"
   }
 ]
@@ -89,3 +86,7 @@ Also in the same virtual environment with the service running:
 ```bash
 $ pytest
 ```
+
+## Developer
+
+Ryan Jeffares
