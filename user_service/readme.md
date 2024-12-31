@@ -29,20 +29,117 @@ Here’s a clearer and more structured set of requirements for a simple user aut
    - Consider scalability and potential future requirements in the system design.
    - Implement rate limiting and basic security checks to prevent abuse.
 
-** Developer : unknown
+** Developer : Euan Leith
 
 
+-----
+(all from project root folder, don't need to run `cd`)
+### Setup
+PostgreSQL:
+```markdown
+brew install libpq
+brew link --force libpq
+pip install psycopg2
+```
+Service:
+```markdown
+python3 -m pip install -r user_service/requirements.txt
+```
 
+### Run
+Start PostgreSQL/Redis:
+```markdown
+docker-compose up
+```
+In a different terminal, run FastAPI:
+```markdown
+fastapi dev user_service/service/main.py
+```
+Then should be accessible through Swagger at `http://127.0.0.1:8000/docs#`
 
-Redis memory that is stored ram volatile , 
-user logins : i login email yash@gmail.com 
-passwrod 123 
+Once finished, need to stop running FastAPI:
+```markdown
+sudo lsof -t -i tcp:8000 | xargs kill -9
+```
 
-fe -> your service , you will return saying that the password is right and my session id is 14667793 user 7 
-in redis: 7 : 14667793 ( give it a time 4 hours ) what this means after 4 hours redis delte this ( not postgres) 
+### Endpoints
+#### Create user
 
-if my user decides to close the tab, i will still save the session id 
-the 
+POST `/users/create`
 
+Payload example:
+```markdown
+{
+    "username": "myuser",
+    "password": "mypassword"
+}
+```
+Response example:
+```markdown
+{
+    "success": true,
+    "message": "Create user successful",
+    "sesssion_id": 1234
+}
+```
 
+#### Authenticate user (when logging in)
+GET `/users/auth`
 
+Payload example:
+```markdown
+{
+    "username": "myuser",
+    "password": "mypassword"
+}
+```
+Response example:
+```markdown
+{
+     "success": true,
+     "message": "Authenticate user successful",
+     "sesssion_id": 1234
+}
+```
+
+#### Authenticate session id
+GET `users/session_auth`
+
+Payload example:
+```markdown
+{
+    "session_id": 1234
+}
+```
+Response example:
+```markdown
+{
+     "success": true,
+     "message": "Authenticate session id successful",
+}
+```
+
+#### Delete user
+DELETE `/users/delete`
+
+Payload example:
+```markdown
+{
+     "username": "myuser",
+     "password": "mypassword"
+}
+```
+Response example:
+```markdown
+{
+     "success": true,
+     "message": "Delete user successful",
+}
+```
+
+---
+todo add tests, run using:
+```markdown
+ python3 -m user_service.service.test_main
+```
+todo also Docker isn't working
