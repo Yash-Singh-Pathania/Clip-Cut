@@ -30,3 +30,19 @@ Here’s a clearer and more structured set of requirements for a simple user aut
    - Implement rate limiting and basic security checks to prevent abuse.
 
 ** Developer : unknown
+
+
+
+
+Redis memory that is stored ram volatile , 
+user logins : i login email yash@gmail.com 
+passwrod 123 
+
+fe -> your service , you will return saying that the password is right and my session id is 14667793 user 7 
+in redis: 7 : 14667793 ( give it a time 4 hours ) what this means after 4 hours redis delte this ( not postgres) 
+
+if my user decides to close the tab, i will still save the session id 
+the 
+
+
+
