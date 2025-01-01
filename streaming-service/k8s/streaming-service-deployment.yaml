@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: steaming-service-deployment
+  name: streaming-service-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: fastapi
+      app: streaming-service
   template:
     metadata:
       labels:
-        app: fastapi
+        app: streaming-service
     spec:
       containers:
-      - name: fastapi
+      - name: streaming-service
         image: ryanjeffares/streaming-service:latest
         ports:
         - containerPort: 8000

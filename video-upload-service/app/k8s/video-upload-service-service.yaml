@@ -8,4 +8,4 @@ spec:
   - port: 81
     targetPort: 8000    
   selector:
-    app: fastapi
+    app: video-upload-service

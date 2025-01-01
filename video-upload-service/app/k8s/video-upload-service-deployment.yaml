@@ -6,20 +6,34 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: fastapi
+      app: video-upload-service
   template:
     metadata:
       labels:
-        app: fastapi
+        app: video-upload-service
     spec:
+      # Init container: waits for Mongo to listen on port 27017
+      initContainers:
+      - name: wait-for-mongodb
+        image: alpine:3.18
+        command: ["/bin/sh","-c"]
+        args:
+          - apk add --no-cache netcat-openbsd;
+            echo "Waiting for mongodb-service to be ready on port 27017...";
+            until nc -z mongodb-service 27017; do
+              echo "MongoDB not up yet, sleeping...";
+              sleep 2;
+            done;
+            echo "MongoDB is up! Proceeding...";
+      # Main container
       containers:
-      - name: fastapi
+      - name: video-upload-service
         image: endouwashere/ds-video-upload-service:4.0
         ports:
-        - containerPort: 8000
+          - containerPort: 8000
         env:
-        - name: MONGO_URL
-          value: "mongodb://mongodb-service.svc.cluster.local:27017/video_status"
+          - name: MONGO_URL
+            value: "mongodb://mongodb-service:27017/video_status"
         resources:
           requests:
             cpu: "500m"
