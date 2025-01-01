@@ -63,7 +63,6 @@ async def get_audio(user_id: str, video_id: str, lang: str):
 
     return StreamingResponse(stream_mp3(file_path), headers=headers)
 
-
 @app.get("/audio/transcription/{user_id}/{video_id}/{lang}")
 async def get_transcription(
     user_id: str, video_id: str, lang: str
@@ -81,7 +80,6 @@ async def get_transcription(
         transcription_json = f.read()
 
     return json.loads(transcription_json)
-
 
 @app.post("/audio/")
 async def process_audio(audiofile_url: str, user_id: str, video_id: str) -> str:
