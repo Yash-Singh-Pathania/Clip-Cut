@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+redis
+pydantic
+pydantic-settings
+ffmpeg-python
+python-dotenv
+opencv-python
+opencv-contrib-python

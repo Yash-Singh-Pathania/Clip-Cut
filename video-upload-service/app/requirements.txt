@@ -1,0 +1,4 @@
+fastapi
+uvicorn[standard]  # Good practice to specify the standard extra
+motor
+python-multipart
