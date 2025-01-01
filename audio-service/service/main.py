@@ -18,14 +18,14 @@ class TranscriptionModel(BaseModel):
 
 
 TASK = "automatic-speech-recognition"
-MODEL = "openai/whisper-base.en"
+MODEL = "./whisper-tiny"
 
 
 app = FastAPI()
 try:
-    pipeline = transformers.pipeline(TASK, MODEL, chunk_length_s=30, device=0)
+    pipeline = transformers.pipeline(task=TASK, model=MODEL, tokenizer=MODEL, chunk_length_s=30, device=0)
 except:
-    pipeline = transformers.pipeline(TASK, MODEL, chunk_length_s=30)
+    pipeline = transformers.pipeline(task=TASK, model=MODEL, tokenizer=MODEL, chunk_length_s=30)
 
 
 if not os.path.isdir("./localstorage"):

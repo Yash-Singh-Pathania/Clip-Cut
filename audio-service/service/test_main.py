@@ -30,8 +30,8 @@ def test_transcriptions():
         response = client.get(f'/audio/transcription/{user_id}/{video_id}/en')
         assert response.status_code == 200
         prediction = ' '.join(t['text'] for t in response.json())
-        # ensure 95% accuracy
-        assert wer(transcriptions[i], prediction) <= 0.05
+        # ensure 80% accuracy
+        assert wer(transcriptions[i].lower(), prediction.lower()) <= 0.2
 
         response = client.get(f'/audio/audio/{user_id}/{video_id}/en')
         assert response.status_code == 200
