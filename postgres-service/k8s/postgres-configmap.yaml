@@ -5,3 +5,4 @@ metadata:
 data:
   01-create-user-service.sql: |
     CREATE DATABASE user_service;
+    CREATE DATABASE video_status

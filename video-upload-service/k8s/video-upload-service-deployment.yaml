@@ -28,7 +28,7 @@ spec:
       # Main container
       containers:
       - name: video-upload-service
-        image: ryanjeffares/video-upload-service:5.0
+        image: endouwashere/ds-video-upload-service:8.0
         ports:
           - containerPort: 8001
         env:
