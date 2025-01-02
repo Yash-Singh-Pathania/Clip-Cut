@@ -1,11 +1,12 @@
-// src/components/RegisterForm.jsx
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const RegisterForm = () => {
+const RegisterForm = ({ setUser }) => {
   const [name, setName] = useState("");
   const [occupation, setOccupation] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -25,12 +26,13 @@ const RegisterForm = () => {
       });
 
       if (!response.ok) {
-        // For example, if a 4xx or 5xx response:
         const errData = await response.json();
-        alert(`Error: ${errData.message || "Unable to register"}`);
+        alert(`Error: ${errData.detail || "Unable to register"}`);
       } else {
         const data = await response.json();
-        alert(`Registration successful: ${data?.message || ""}`);
+        alert("Registration successful!");
+        setUser({ userId: data.user_id, name: data.name }); // Save user details
+        navigate("/dashboard"); // Redirect to dashboard
       }
     } catch (error) {
       alert("An error occurred. Please try again.");

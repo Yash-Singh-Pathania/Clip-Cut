@@ -28,9 +28,9 @@ spec:
       # Main container
       containers:
       - name: video-upload-service
-        image: endouwashere/ds-video-upload-service:4.0
+        image: endouwashere/ds-video-upload-service:7.0
         ports:
-          - containerPort: 8000
+          - containerPort: 8001
         env:
           - name: MONGO_URL
             value: "mongodb://mongodb-service:27017/video_status"

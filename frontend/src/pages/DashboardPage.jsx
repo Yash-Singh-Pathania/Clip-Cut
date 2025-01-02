@@ -1,37 +1,7 @@
 import React, { useState, useRef } from "react";
 import "./DashboardPage.css";
 
-// Mock data for previously uploaded videos
-const MOCK_VIDEOS = [
-  {
-    id: 1,
-    title: "First Video",
-    thumbnailUrl: "https://via.placeholder.com/120x80?text=First+Vid",
-    resolution: "1080p",
-    transcriptionLink: "#",
-    audioLink: "#",
-    editedVideoLink: "#",
-  },
-  {
-    id: 2,
-    title: "Second Video",
-    thumbnailUrl: "https://via.placeholder.com/120x80?text=Second+Vid",
-    resolution: "720p",
-    transcriptionLink: "#",
-    audioLink: "#",
-    editedVideoLink: "#",
-  },
-  {
-    id: 3,
-    title: "Third Video",
-    thumbnailUrl: "https://via.placeholder.com/120x80?text=Third+Vid",
-    resolution: "4K",
-    transcriptionLink: "#",
-    audioLink: "#",
-  },
-];
-
-const DashboardPage = () => {
+const DashboardPage = ({ user }) => {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const fileInputRef = useRef(null);
 
@@ -54,7 +24,7 @@ const DashboardPage = () => {
     processFile(file);
   };
 
-  const processFile = (file) => {
+  const processFile = async (file) => {
     if (!file) return;
 
     if (file.size > 100 * 1024 * 1024) {
@@ -67,35 +37,42 @@ const DashboardPage = () => {
       return;
     }
 
-    alert(`File ${file.name} uploaded successfully!`);
+    try {
+      const formData = new FormData();
+      formData.append("user_id", user?.userId || "unknown"); // Fallback for user ID
+      formData.append("file", file);
+
+      const response = await fetch("http://127.0.0.1:8001/upload-video/", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        alert(`Error: ${errData.detail || "Unable to upload video"}`);
+      } else {
+        const data = await response.json();
+        alert(`File ${file.name} uploaded successfully! Video ID: ${data.video_id}`);
+      }
+    } catch (error) {
+      alert("An error occurred while uploading the video.");
+    }
   };
 
   return (
     <div className="dashboard-container">
-      {/* Sidebar */}
       <aside className="video-sidebar">
         <h2>Your Videos</h2>
-        <div className="video-list">
-          {MOCK_VIDEOS.map((video) => (
-            <div
-              key={video.id}
-              className="video-item"
-              onClick={() => setSelectedVideo(video)}
-            >
-              <img
-                src={video.thumbnailUrl}
-                alt={video.title}
-                className="video-thumbnail"
-              />
-              <div className="video-info">
-                <span className="video-title">{video.title}</span>
-              </div>
-            </div>
-          ))}
+
+        {/* User Info Section */}
+        <div className="user-info">
+          <div className="user-icon">👤</div>
+          <div className="user-name">
+            {user?.name || "Guest User"} {/* Fallback for user name */}
+          </div>
         </div>
       </aside>
 
-      {/* Main Content */}
       <main className="main-dashboard">
         <div
           className="drag-drop-area"
@@ -105,12 +82,8 @@ const DashboardPage = () => {
         >
           <div className="drag-drop-icon">📂</div>
           <div className="drag-drop-text">Drag and drop your video here</div>
-          <div className="drag-drop-disclaimer">
-            Only MP4 files under 100MB are supported.
-          </div>
         </div>
 
-        {/* Hidden input element */}
         <input
           type="file"
           accept="video/mp4"
@@ -118,31 +91,6 @@ const DashboardPage = () => {
           style={{ display: "none" }}
           onChange={handleFileChange}
         />
-
-        {/* Video Details Card */}
-        {selectedVideo && (
-          <div className="video-details-card">
-            <button
-              className="close-card-btn"
-              onClick={() => setSelectedVideo(null)}
-            >
-              &times;
-            </button>
-            <h3>{selectedVideo.title}</h3>
-            <p>Resolution: {selectedVideo.resolution}</p>
-            <div className="download-links">
-              <a href={selectedVideo.editedVideoLink} download>
-                Download Edited Video
-              </a>
-              <a href={selectedVideo.transcriptionLink} download>
-                Download Transcription
-              </a>
-              <a href={selectedVideo.audioLink} download>
-                Download Audio
-              </a>
-            </div>
-          </div>
-        )}
       </main>
     </div>
   );

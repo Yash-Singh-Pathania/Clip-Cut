@@ -1,9 +1,10 @@
-// src/components/LoginForm.jsx
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const LoginForm = () => {
+const LoginForm = ({ setUser }) => {
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -15,19 +16,26 @@ const LoginForm = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: emailOrUsername,
+          email: emailOrUsername,
           password,
         }),
       });
 
+      // Handle response status
       if (!response.ok) {
         const errData = await response.json();
-        alert(`Error: ${errData.message || "Unable to login"}`);
-      } else {
-        const data = await response.json();
-        alert(`Login successful: ${data?.message || ""}`);
+        alert(`Error: ${errData.detail || "Unable to login"}`);
+        return; // Stop execution on error
       }
+
+      // Handle success response
+      const data = await response.json();
+      alert("Login successful!");
+      setUser({ userId: data.user_id, name: data.name }); // Save user info
+      navigate("/dashboard"); // Redirect to the dashboard
+
     } catch (error) {
+      console.error("Login error:", error); // Log for debugging
       alert("An error occurred. Please try again.");
     }
   };

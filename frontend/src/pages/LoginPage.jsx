@@ -3,7 +3,7 @@ import React from "react";
 import LoginForm from "../components/LoginForm";
 import { Link, useNavigate } from "react-router-dom";
 
-const LoginPage = () => {
+const LoginPage = ({ setUser }) => {
   const navigate = useNavigate();
 
   const handleTestLogin = () => {
@@ -14,9 +14,10 @@ const LoginPage = () => {
   return (
     <div className="auth-container">
       <h2>Sign In</h2>
-      <LoginForm />
+      {/* Pass setUser to LoginForm */}
+      <LoginForm setUser={setUser} />
       <br />
-      <button onClick={handleTestLogin}>Test Login </button>
+      <button onClick={handleTestLogin}>Test Login</button>
 
       <div className="link-container">
         <p>Don’t have an account?</p>

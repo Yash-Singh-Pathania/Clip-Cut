@@ -66,7 +66,7 @@ def create_user(db: Session, user_data: UserCreate) -> User:
 def root():
     return {"message": "Welcome to the User Service API"}
 
-@app.post("/register", response_model=UserOut, status_code=status.HTTP_201_CREATED)
+@app.post("/register", status_code=status.HTTP_201_CREATED)
 def register_user(user_data: UserCreate, db: Session = Depends(get_db)):
     """
     1. Validates that occupation is one of ("salaries", "student", "other").
@@ -80,14 +80,13 @@ def register_user(user_data: UserCreate, db: Session = Depends(get_db)):
             detail="Email is already registered",
         )
     new_user = create_user(db, user_data)
-    return new_user
+    return {"user_id": new_user.id, "name": new_user.name, "message": "Registration successful"}
 
 @app.post("/login")
 def login_user(login_data: UserLogin, db: Session = Depends(get_db)):
     """
     1. Checks email/password combination.
-    2. Returns a simple success/failure message.
-       (Real apps typically return a JWT or session token.)
+    2. Returns user_id and name on success.
     """
     user = get_user_by_email(db, login_data.email)
     if not user:
@@ -101,8 +100,7 @@ def login_user(login_data: UserLogin, db: Session = Depends(get_db)):
             detail="Invalid email or password",
         )
 
-    # In real-world apps: generate and return an access token (e.g. JWT)
-    return {"message": "Login successful", "user_id": user.id}
+    return {"message": "Login successful", "user_id": user.id, "name": user.name}
 
 @app.get("/users", response_model=List[UserOut])
 def list_users(db: Session = Depends(get_db)):
