@@ -1,0 +1,39 @@
+/* src/components/Header.css */
+.main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background: #fff;
+    padding: 10px 20px;
+}
+
+.logo-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.header-logo {
+    width: 48px;
+    height: auto;
+    margin-right: 12px;
+}
+
+.cloud-emoji {
+    font-size: 48px;
+    margin-right: 12px;
+}
+
+.brand-text h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.brand-text p {
+    font-size: 1rem;
+    color: #666;
+    margin: 4px 0 0 0;
+}

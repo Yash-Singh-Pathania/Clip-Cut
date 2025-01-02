@@ -6,6 +6,6 @@ spec:
   type: LoadBalancer
   ports:
   - port: 81
-    targetPort: 8000    
+    targetPort: 8001
   selector:
     app: video-upload-service

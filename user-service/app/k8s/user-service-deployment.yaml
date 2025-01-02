@@ -18,7 +18,7 @@ spec:
         command: ['sh', '-c', 'until nc -z postgres-service 5432; do echo waiting for database; sleep 2; done;']
       containers:
       - name: user-service
-        image: endouwashere/ds-user-service:3.0
+        image: endouwashere/ds-user-service-service:6.0
         imagePullPolicy: Always
         ports:
         - containerPort: 8000

@@ -1,5 +1,6 @@
 fastapi
 uvicorn[standard]  # Good practice to specify the standard extra
 motor
+sqlalchemy
 python-multipart
 redis
