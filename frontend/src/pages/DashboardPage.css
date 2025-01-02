@@ -1,0 +1,195 @@
+/* src/pages/DashboardPage.css */
+
+/* Header adjustments */
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 60px;
+    z-index: 1000;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Dashboard container to account for header and layout */
+.dashboard-container {
+    display: flex;
+    flex-direction: row;
+    min-height: calc(100vh - 60px);
+    width: 100%;
+    margin-top: 60px;
+    background: #fff;
+    text-align: left;
+}
+
+/* --- LEFT SIDEBAR --- */
+.video-sidebar {
+    width: 260px;
+    background: #fafafa;
+    border-right: 1px solid #ddd;
+    padding: 1.5rem 1rem;
+    overflow-y: auto;
+    position: fixed;
+    /* Fix to the left of the screen */
+    top: 60px;
+    /* Below the header */
+    right: 0;
+    height: calc(100vh - 60px);
+    /* Full height minus header */
+}
+
+.video-sidebar h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.video-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* Each video item with thumbnail + title */
+.video-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.video-item:hover {
+    background: #f1f1f1;
+}
+
+.video-thumbnail {
+    width: 60px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.video-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.video-title {
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+/* --- MAIN CONTENT AREA --- */
+.main-dashboard {
+    margin-left: 260px;
+    /* Offset for sidebar */
+    flex-grow: 1;
+    /* Take up remaining space */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Center horizontally */
+    justify-content: center;
+    /* Center vertically */
+    min-height: calc(100vh - 60px);
+    /* Full height minus header */
+    padding: 20px;
+}
+
+/* Drag-and-drop area */
+.drag-drop-area {
+    background-color: #f8f8f8;
+    border: 2px dashed #e10f0f;
+    border-radius: 12px;
+    width: 60%;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.drag-drop-area:hover {
+    background-color: #f1f1f1;
+}
+
+/* Placeholder text in the drop area */
+.drag-drop-text {
+    font-size: 1rem;
+    color: #666;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.drag-drop-icon {
+    font-size: 2rem;
+    color: #aaa;
+}
+
+/* Disclaimer styling */
+.drag-drop-disclaimer {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: #999;
+    text-align: center;
+}
+
+/* --- VIDEO DETAILS CARD --- */
+.video-details-card {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fafafa;
+    color: #000;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-width: 280px;
+    max-width: 320px;
+}
+
+.video-details-card h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.video-details-card p {
+    margin: 0 0 1rem 0;
+}
+
+.download-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.download-links a {
+    color: #0071e3;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.download-links a:hover {
+    text-decoration: underline;
+}
+
+.close-card-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    float: right;
+    margin: -8px -8px 0 0;
+}
+
+.close-card-btn:hover {
+    color: #999;
+}
