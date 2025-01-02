@@ -14,4 +14,4 @@ EXPOSE 8000
 ENV MONGO_URL=mongodb://mongodb-service:27017/video_status
 
 # Run the application when the container launches
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]
+CMD ["python", "service/main.py"]

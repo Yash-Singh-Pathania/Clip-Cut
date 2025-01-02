@@ -1,11 +1,16 @@
+import os
 import subprocess
 import tempfile
 
 import aiofiles
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
+from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorGridFSBucket
 import requests
 
+db_client = AsyncIOMotorClient(os.getenv("MONGO_URL"))
+db = db_client.video_status
+grid_fs_bucket = AsyncIOMotorGridFSBucket(db)
 app = FastAPI()
 
 
@@ -86,10 +91,8 @@ def merge_streams(video_url: str, audio_url: str, subtitles: str):
         },
     },
 )
-def stream_video(user_id: str, video_id: str, quality: str, lang: str) -> StreamingResponse:
-    transcription_url = (
-        f"http://localhost:8000/audio/transcription/{user_id}/{video_id}/{lang}"
-    )
+async def stream_video(user_id: str, video_name: str, quality: str) -> StreamingResponse:
+    transcription_filename = f"{user_id}_{video_name}"
     # TODO: whatever the video endpoint is
     video_url = f"http://localhost:5672/video/{user_id}/{video_id}/{quality}"
     audio_url = f"http://localhost:8000/audio/audio/{user_id}/{video_id}/{lang}"
