@@ -18,7 +18,7 @@ spec:
         command: ['sh', '-c', 'until nc -z postgres-service 5432; do echo waiting for database; sleep 2; done;']
       containers:
       - name: monitoring-service
-        image: endouwashere/ds-monitoring-service:lastest
+        image: endouwashere/ds-monitoring-service:1.0
         imagePullPolicy: Always
         ports:
         - containerPort: 8002
