@@ -1,0 +1,45 @@
+/* src/components/Header.css */
+
+/* The main header, pinned to top-left by default. Adjust as needed. */
+.main-header {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+/* Container that holds the logo image + brand text side by side */
+.logo-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+/* 
+  PNG Logo: Adjust width as needed.
+  You could also specify a height instead. 
+*/
+.header-logo {
+    width: 48px;
+    height: auto;
+    margin-right: 12px;
+}
+
+/* If you still want a cloud emoji, keep or edit these styles. 
+   Otherwise, remove them and the corresponding <span> from Header.jsx. */
+.cloud-emoji {
+    font-size: 48px;
+    margin-right: 12px;
+}
+
+/* Brand text styling */
+.brand-text h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.brand-text p {
+    font-size: 1rem;
+    color: #666;
+    margin: 4px 0 0 0;
+}
