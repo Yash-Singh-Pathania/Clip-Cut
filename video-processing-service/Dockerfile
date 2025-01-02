@@ -1,12 +1,12 @@
 FROM python:3.10-slim
 
-WORKDIR /app
+RUN apt update && apt install -y ffmpeg libsm6 libxext6
 
-COPY requirements.txt /app/requirements.txt
+COPY requirements.txt ./
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . /app
+COPY . .
 
 EXPOSE 8000
 
@@ -14,4 +14,4 @@ EXPOSE 8000
 ENV MONGO_URL=mongodb://mongodb-service:27017/video_status
 
 # Run the application when the container launches
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "./service/main.py"]

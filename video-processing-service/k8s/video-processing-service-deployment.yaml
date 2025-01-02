@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: video-upload-service
+  name: video-processing-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: video-upload-service
+      app: video-processing-service
   template:
     metadata:
       labels:
-        app: video-upload-service
+        app: video-processing-service
     spec:
       # Init container: waits for Mongo to listen on port 27017
       initContainers:
@@ -27,8 +27,8 @@ spec:
             echo "MongoDB is up! Proceeding...";
       # Main container
       containers:
-      - name: video-upload-service
-        image: ryanjeffares/video-upload-service:5.0
+      - name: video-processing-service
+        image: ryanjeffares/video-processing-service:1.0
         ports:
           - containerPort: 8000
         env:
