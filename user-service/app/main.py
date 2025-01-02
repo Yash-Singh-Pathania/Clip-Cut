@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
+from fastapi.middleware.cors import CORSMiddleware
 
 # Local imports
 from models import User, SessionLocal
@@ -16,6 +17,14 @@ from password import hash_password, verify_password
 # FastAPI Initialization
 # -----------------------------------------------------------------------------
 app = FastAPI(title="User Service API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow requests from all origins
+    allow_credentials=True,  # Allow cookies to be sent with requests
+    allow_methods=["*"],  # Allow all HTTP methods (GET, POST, PUT, DELETE, etc.)
+    allow_headers=["*"],  # Allow all headers
+)
 
 # -----------------------------------------------------------------------------
 # Dependency to get DB session
