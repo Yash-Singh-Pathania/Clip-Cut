@@ -28,8 +28,8 @@ async def get_video(video_id: str, output_stream: BytesIO):
     await grid_fs_bucket.download_to_stream(ObjectId(video_id), output_stream)
 
 
-async def upload_video(video_id: str, contents) -> str:
-    id = await grid_fs_bucket.upload_from_stream(video_id, contents)
+async def upload_video(file_name: str, contents) -> str:
+    id = await grid_fs_bucket.upload_from_stream(file_name, contents)
     return str(id)
 
 
@@ -80,7 +80,7 @@ def listen_for_videos():
         if message["type"] == "message":
             data = message["data"].decode("utf-8").split(",")
             file_name, video_id = data[0], data[1]
-            print(f"Got {video_id} from channel, processing")
+            print(f"Got {file_name},{video_id} from channel, processing")
             Process(target=process_video, args=[file_name, video_id]).start()
 
 

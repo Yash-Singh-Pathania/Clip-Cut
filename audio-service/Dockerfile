@@ -7,5 +7,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+ENV MONGO_URL=mongodb://mongodb-service:27017/video_status
+
 EXPOSE 8000
-CMD [ "fastapi", "run", "service/main.py" ]
+# CMD [ "fastapi", "run", "service/main.py" ]
+CMD ["python", "service/main.py"]
