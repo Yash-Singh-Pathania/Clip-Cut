@@ -25,38 +25,40 @@ const DashboardPage = ({ user }) => {
   };
 
   const processFile = async (file) => {
-    if (!file) return;
+  if (!file) return;
 
-    if (file.size > 100 * 1024 * 1024) {
-      alert("File size exceeds 100MB. Please upload a smaller file.");
-      return;
+  if (file.size > 100 * 1024 * 1024) {
+    alert("File size exceeds 100MB. Please upload a smaller file.");
+    return;
+  }
+
+  if (file.type !== "video/mp4") {
+    alert("Only MP4 format is supported.");
+    return;
+  }
+
+  try {
+    const userId = user?.userId || "unknown"; // Fallback for user ID
+    const url = `http://127.0.0.1:8001/upload-video/?user_id=${encodeURIComponent(userId)}`;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch(url, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errData = await response.json();
+      alert(`Error: ${errData.detail || "Unable to upload video"}`);
+    } else {
+      const data = await response.json();
+      alert(`File ${file.name} uploaded successfully! Video ID: ${data.video_id}`);
     }
-
-    if (file.type !== "video/mp4") {
-      alert("Only MP4 format is supported.");
-      return;
-    }
-
-    try {
-      const formData = new FormData();
-      formData.append("user_id", user?.userId || "unknown"); // Fallback for user ID
-      formData.append("file", file);
-
-      const response = await fetch("http://127.0.0.1:8001/upload-video/", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errData = await response.json();
-        alert(`Error: ${errData.detail || "Unable to upload video"}`);
-      } else {
-        const data = await response.json();
-        alert(`File ${file.name} uploaded successfully! Video ID: ${data.video_id}`);
-      }
-    } catch (error) {
-      alert("An error occurred while uploading the video.");
-    }
+  } catch (error) {
+    alert("An error occurred while uploading the video.");
+  }
   };
 
   return (
