@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fronted-service
+  labels:
+    app: fronted
+spec:
+  selector:
+    app: fronted
+  ports:
+    - protocol: TCP
+      port: 8005
+      targetPort: 80
+  type: NodePort 
