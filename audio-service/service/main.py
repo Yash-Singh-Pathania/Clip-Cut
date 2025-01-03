@@ -1,3 +1,4 @@
+import asyncio
 from io import BytesIO
 import json
 import os
@@ -28,34 +29,28 @@ except:
     )
 
 
-async def get_audio(video_id: str) -> bytes:
+async def get_audio(video_id: str) -> BytesIO:
     output_stream = BytesIO()
-    await grid_fs_bucket.download_to_stream(ObjectId(video_id), output_stream)
-    with tempfile.NamedTemporaryFile("wb") as temp_video:
-        temp_video.write(output_stream.getvalue())
-        video_path = temp_video.name
-
-        with tempfile.NamedTemporaryFile("wb", suffix=".mp3") as temp_audio:
-            audio_path = temp_audio.name
-            subprocess.call(
-                ["ffmpeg", "-y", "-i", video_path, audio_path],
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.STDOUT,
-            )
-
-            return temp_audio.read()
-
-
-async def upload_file(file_name: str, contents) -> str:
-    id = await grid_fs_bucket.upload_from_stream(file_name, contents)
-    return str(id)
+    grid_fs_bucket.download_to_stream(ObjectId(video_id), output_stream)
+    return output_stream
 
 
 @app.post("/audio")
-async def process_audio(video_id: str):
-    audio_content = await get_audio(video_id)
+def process_audio(video_id: str):
+    video_content = asyncio.run(get_audio(video_id))
+    video_path = f"./{video_id}.mp4"
+    with open(video_path, "wb") as video:
+        video.write(video_content.read())
 
-    with tempfile.NamedTemporaryFile() as temp_file:
-        temp_file.write(audio_content)
-        transcription = pipeline(temp_file.name, return_timestamps=True)["chunks"]
-        return transcription
+    audio_path = f"./{video_id}.mp3"
+    subprocess.call(
+        ["ffmpeg", "-y", "-i", video_path, audio_path],
+    )
+
+    transcription = pipeline(audio_path, return_timestamps=True)["chunks"]
+    response = {"transcription": transcription}
+
+    os.remove(audio_path)
+    os.remove(video_path)
+
+    return response

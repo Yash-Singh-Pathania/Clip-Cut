@@ -19,11 +19,9 @@ grid_fs_bucket = AsyncIOMotorGridFSBucket(db)
 redis_channel = redis.Redis(host="redis-service", port=6379)
 
 resolutions = {
-    "1080P": (1920, 1080),
     "720P": (1280, 720),
     "480P": (640, 480),
     "360P": (480, 360),
-    "240P": (320, 240),
 }
 
 
@@ -115,9 +113,9 @@ def process_video(file_name: str, video_id: str):
     print(f"Downloaded {video_id} from DB")
 
     transcription = requests.post(
-        "http://audio-service/audio",
-        params={"file_name": file_name, "video_id": video_id},
-    ).json()
+        "http://audio-service.default.svc.cluster.local:83/audio",
+        params={"video_id": video_id},
+    ).json()["transcription"]
     subtitles = get_transcription(transcription)
     print(f"Got transcription for {video_id}")
 
