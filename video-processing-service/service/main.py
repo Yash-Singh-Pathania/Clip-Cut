@@ -1,6 +1,5 @@
 import asyncio
 from bson import ObjectId
-import cv2
 from io import BytesIO
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorGridFSBucket
 from multiprocessing import Process
@@ -19,61 +18,75 @@ grid_fs_bucket = AsyncIOMotorGridFSBucket(db)
 redis_channel = redis.Redis(host="redis-service", port=6379)
 
 resolutions = {
-    "720P": (1280, 720),
-    "480P": (640, 480),
-    "360P": (480, 360),
+    "720p": (1280, 720),
+    "480p": (640, 480),
+    "360p": (480, 360),
 }
 
 
 def create_video(
-    original_name: str, original_path: str, resolution: Tuple[int, int], subtitles: str
+    original_name: str,
+    original_path: str,
+    resolution: str,
+    dimensions: Tuple[int, int],
+    subtitles: str | None,
 ):
-    cap = cv2.VideoCapture(original_path)
-    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+    tagged_filename = f"{os.path.splitext(original_name)[0]}_{resolution}.mp4"
+    print(f"Creating {tagged_filename}")
 
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".srt") as subtitle_file:
-        subtitle_file.write(subtitles)
-        subtitle_path = subtitle_file.name
+    if subtitles is not None:
+        with tempfile.NamedTemporaryFile(suffix=".srt") as subtitles_file:
+            subtitles_file.write(subtitles.encode("utf-8"))
+            # fmt: off
+            ffmpeg_retcode = subprocess.call(
+                [
+                    "ffmpeg",
+                    "-y",
+                    "-i", original_path,
+                    "-vf", f"subtitles={subtitles_file.name}",
+                    "-s", f"{dimensions[0]}x{dimensions[1]}",
+                    "-c:v", "libx264",
+                    "-c:a", "aac",
+                    tagged_filename
+                ]
+            )
 
-    with tempfile.NamedTemporaryFile("wb") as rescaled:
-        out = cv2.VideoWriter(
-            rescaled.name, fourcc, int(cap.get(cv2.CAP_PROP_FPS)), resolution
-        )
-
-        while True:
-            ret, frame = cap.read()
-            if not ret:
-                break
-
-            resized_frame = cv2.resize(frame, resolution)
-            out.write(resized_frame)
-
-        out.release()
-
+            if ffmpeg_retcode != 0:
+                print("Retrying without subtitles")
+                ffmpeg_retcode = subprocess.call(
+                    [
+                        "ffmpeg",
+                        "-y",
+                        "-i", original_path,
+                        "-s", f"{dimensions[0]}x{dimensions[1]}",
+                        "-c:v", "libx264",
+                        "-c:a", "aac",
+                        tagged_filename
+                    ]
+                )
+            # fmt: on
+    else:
         # fmt: off
-        ffmpeg_process = subprocess.Popen(
+        ffmpeg_retcode = subprocess.call(
             [
                 "ffmpeg",
-                "-y", # overwrite automatically
-                "-i", rescaled.name, # input 1 (video) from stdin        
-                "-vf", f"subtitles={subtitle_path}", # add subtitles            
-                "-c:v", "libx264", # copy video codec            
-                "-c:a", "aac", # encode audio to AAC            
-                "-f", "mp4", # output an mp4            
-                rescaled.name, # output to tempfile we made
-            ],
-            stdout=subprocess.PIPE,
-            pass_fds=(3,),
+                "-y",
+                "-i", original_path,
+                "-s", f"{dimensions[0]}x{dimensions[1]}",
+                "-c:v", "libx264",
+                "-c:a", "aac",
+                tagged_filename
+            ]
         )
         # fmt: on
-        ffmpeg_process.wait()
 
-        tagged_filename = f"{original_name}{resolution}.mp4"
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(upload_video(tagged_filename, rescaled.read()))
-        print(f"Uploaded {tagged_filename} to DB")
-
-    cap.release()
+    if ffmpeg_retcode == 0:
+        with open(tagged_filename, "rb") as rescaled:
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(upload_video(tagged_filename, rescaled.read()))
+            print(f"Uploaded {tagged_filename} to DB")
+    else:
+        print(f"Error rescaling {original_name} to {dimensions}")
 
 
 def get_transcription(transcription_json) -> str:
@@ -110,24 +123,36 @@ def process_video(file_name: str, video_id: str):
 
     output_stream = BytesIO()
     loop.run_until_complete(get_video(video_id, output_stream))
-    print(f"Downloaded {video_id} from DB")
+    print(f"Downloaded {file_name} from DB")
 
-    transcription = requests.post(
+    transcription_response = requests.post(
         "http://audio-service.default.svc.cluster.local:83/audio",
         params={"video_id": video_id},
-    ).json()["transcription"]
-    subtitles = get_transcription(transcription)
-    print(f"Got transcription for {video_id}")
+    )
 
-    with tempfile.NamedTemporaryFile("wb") as temp_video:
+    if transcription_response.status_code == 200:        
+        subtitles = get_transcription(transcription_response.json()["transcription"])
+        print(f"Got subtitles for {file_name}")
+    else:
+        subtitles = None
+        print(f"No subtitles available for {file_name}")
+
+    with tempfile.NamedTemporaryFile("w+b", suffix=".mp4") as temp_video:
         temp_video.write(output_stream.getvalue())
         temp_path = temp_video.name
         processes: List[Process] = []
 
-        for resolution, dimensions in resolutions.values():
-            print(f"Rescaling {file_name} to {dimensions}")
+        for resolution, dimensions in resolutions.items():
+            print(f"Rescaling {file_name} to {resolution}p")
             process = Process(
-                target=create_video, args=[file_name, temp_path, resolution, subtitles]
+                target=create_video,
+                args=[
+                    file_name,
+                    temp_path,
+                    resolution,
+                    dimensions,
+                    subtitles,
+                ],
             )
             process.start()
             processes.append(process)

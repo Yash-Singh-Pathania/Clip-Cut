@@ -21,13 +21,13 @@ $ sudo chmod +x run.sh
 $ ./run.sh
 ```
 
-Windows (Powershell):
+Windows (Powershell with Administrator privileges):
 
 ```bash
 $ ./run.ps1
 ```
 
-Keep this terminal window open (it takes a long time to start!).
+Keep this terminal window open (it takes a long time to start!). On Mac/Linux, you will be prompted for your password to run the tunnel.
 
 To check the status of the services:
 

@@ -9,6 +9,8 @@ echo "Deleting Minikube..."
 minikube delete
 
 echo "Starting Minikube..."
+minikube config set cpus 4
+minikube config set memory 3920
 minikube start
 
 # Path to the apply_all_k8s.sh script
