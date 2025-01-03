@@ -3,9 +3,9 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime
 
-from database import engine, SessionLocal
-from models import Base, VideoStatusDB
-from schemas import VideoCreate, VideoUpdate, VideoRead, VideoStatusEnum
+from .database import engine, SessionLocal
+from .models import Base, VideoStatusDB
+from .schema import VideoCreate, VideoUpdate, VideoRead, VideoStatusEnum
 
 app = FastAPI(title="Monitoring Service with Postgres + GridFS IDs")
 
@@ -43,7 +43,7 @@ def create_video(video_data: VideoCreate, db: Session = Depends(get_db)):
         upload_time=video_data.upload_time or datetime.utcnow(),
         processed_time=video_data.processed_time,
         total_processing_time=video_data.total_processing_time,
-        metadata=video_data.metadata,
+        additonal_details=video_data.additonal_details,
     )
     db.add(db_video)
     db.commit()
@@ -74,7 +74,7 @@ def update_video(video_id: int, updates: VideoUpdate, db: Session = Depends(get_
     """
     Partially update a video record. 
     If an update sets status=done, auto-set processed_time and total_processing_time.
-    Merge metadata if needed, or overwrite.
+    Merge additonal_details if needed, or overwrite.
     """
     db_video = db.query(VideoStatusDB).filter(VideoStatusDB.id == video_id).first()
     if not db_video:
@@ -82,14 +82,14 @@ def update_video(video_id: int, updates: VideoUpdate, db: Session = Depends(get_
 
     data = updates.dict(exclude_unset=True)
 
-    # Handle metadata separately if you want to merge
-    new_metadata = data.pop("metadata", None)
-    if new_metadata is not None:
-        if db_video.metadata is None:
-            db_video.metadata = {}
+    # Handle additonal_details separately if you want to merge
+    new_additonal_details = data.pop("additonal_details", None)
+    if new_additonal_details is not None:
+        if db_video.additonal_details is None:
+            db_video.additonal_details = {}
         # Merge or overwrite keys
-        for k, v in new_metadata.items():
-            db_video.metadata[k] = v
+        for k, v in new_additonal_details.items():
+            db_video.additonal_details[k] = v
 
     # If status is changed to 'done', compute processed_time
     if "status" in data and data["status"] == VideoStatusEnum.done:

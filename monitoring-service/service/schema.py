@@ -27,7 +27,7 @@ class VideoCreate(BaseModel):
     processed_time: Optional[datetime] = None
     total_processing_time: Optional[int] = None
 
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    additonal_details: Dict[str, Any] = Field(default_factory=dict)
 
 class VideoUpdate(BaseModel):
     user_id: Optional[str] = None
@@ -46,7 +46,7 @@ class VideoUpdate(BaseModel):
     processed_time: Optional[datetime] = None
     total_processing_time: Optional[int] = None
 
-    metadata: Optional[Dict[str, Any]] = None
+    additonal_details: Optional[Dict[str, Any]] = None
 
 class VideoRead(BaseModel):
     """
@@ -71,7 +71,7 @@ class VideoRead(BaseModel):
     processed_time: Optional[datetime]
     total_processing_time: Optional[int]
 
-    metadata: Dict[str, Any]
+    additonal_details: Dict[str, Any]
 
     class Config:
         orm_mode = True

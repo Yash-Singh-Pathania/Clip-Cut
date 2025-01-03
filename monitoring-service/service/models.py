@@ -35,6 +35,6 @@ class VideoStatusDB(Base):
     # Additional fields
     total_processing_time = Column(Integer, nullable=True)
 
-    # Arbitrary metadata
+    # Arbitrary additonal_details
     # If your Postgres version supports JSONB, prefer JSONB over JSON
-    metadata = Column(JSONB, nullable=True)
+    additonal_details = Column(JSONB, nullable=True)
