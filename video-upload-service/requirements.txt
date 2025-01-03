@@ -4,3 +4,4 @@ motor
 sqlalchemy
 python-multipart
 redis
+httpx
