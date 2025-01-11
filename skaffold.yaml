@@ -1,0 +1,29 @@
+apiVersion: skaffold/v2beta12
+kind: Config
+metadata:
+  name: video-services
+build:
+  artifacts:
+    - image: endouwashere/ds-video-upload-service
+      context: ./video-upload-service
+      docker:
+        dockerfile: Dockerfile
+    - image: ryanjeffares/video-processing-service
+      context: ./video-processing-service
+      docker:
+        dockerfile: Dockerfile
+    - image: endouwashere/ds-user-service-service
+      context: ./user-service/app
+      docker:
+        dockerfile: dockerfile
+    - image: endouwashere/ds-frontend-service
+      context: ./frontend
+      docker:
+        dockerfile: dockerfile
+deploy:
+  kubectl:
+    manifests:
+      - ./video-upload-service/k8s/video-upload-service-deployment.yaml
+      - ./video-processing-service/k8s/video-processing-service-deployment.yaml
+      - ./user-service/app/k8s/user-service-deployment.yaml # Update this path based on actual file location
+      - ./frontend/k8s/frontend-deployment.yml
