@@ -11,6 +11,13 @@ A distributed and scalable video streaming service. Users can create accounts, u
 * Sinem Taşkın 24283182
 
 ## Running
+TLDR : if you have docker and minikube 
+
+Running this command alone should set everything up 
+'''code
+chmod +x clip_cut.sh ./clip_cut.sh
+'''
+---- 
 
 Install Docker, Kubernetes and Minikube.
 

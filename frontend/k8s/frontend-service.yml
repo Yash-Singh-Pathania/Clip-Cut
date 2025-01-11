@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: fronted-service
+  name: frontend-service
   labels:
-    app: fronted
+    app: frontend
 spec:
   selector:
-    app: fronted
+    app: frontend
   ports:
     - protocol: TCP
       port: 8005

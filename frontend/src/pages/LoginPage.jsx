@@ -7,17 +7,14 @@ const LoginPage = ({ setUser }) => {
   const navigate = useNavigate();
 
   const handleTestLogin = () => {
-    // pretend successful login
     navigate("/dashboard");
   };
 
   return (
-    <div className="auth-container">
-      <h2>Sign In</h2>
+    <div>
       {/* Pass setUser to LoginForm */}
       <LoginForm setUser={setUser} />
       <br />
-      <button onClick={handleTestLogin}>Test Login</button>
 
       <div className="link-container">
         <p>Don’t have an account?</p>

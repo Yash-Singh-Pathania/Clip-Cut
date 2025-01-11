@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fronted
+  name: frontend
   labels:
-    app: fronted
+    app: frontend
 spec:
-  replicas: 3 # Number of replicas for high availability
+  replicas: 1 # Number of replicas for high availability
   selector:
     matchLabels:
-      app: fronted
+      app: frontend
   template:
     metadata:
       labels:
-        app: fronted
+        app: frontend
     spec:
       containers:
-        - name: fronted
-          image: endouwashere/ds-frontend-service:3.0
+        - name: frontend
+          image: endouwashere/ds-frontend-service:10.0
           ports:
             - containerPort: 80
           env:
             - name: NODE_ENV
-              value: "production" # Set environment variable if needed
+              value: "production"

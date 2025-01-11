@@ -69,7 +69,7 @@ def root():
 @app.post("/register", status_code=status.HTTP_201_CREATED)
 def register_user(user_data: UserCreate, db: Session = Depends(get_db)):
     """
-    1. Validates that occupation is one of ("salaries", "student", "other").
+    1. Validates that occupation is one of ("working", "student", "other").
     2. Ensures email is unique in DB.
     3. Hashes the password before storing.
     """

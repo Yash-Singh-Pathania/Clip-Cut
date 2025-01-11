@@ -11,7 +11,7 @@ class UserBase(BaseModel):
 
     @validator("occupation")
     def validate_occupation(cls, v):
-        allowed = {"salaries", "student", "other"}
+        allowed = {"working", "student", "other"}
         if v not in allowed:
             raise ValueError(f"Occupation must be one of {allowed}")
         return v
@@ -38,7 +38,7 @@ class UserUpdate(BaseModel):
     def validate_occupation(cls, v):
         if v is None:
             return v
-        allowed = {"salaries", "student", "other"}
+        allowed = {"working", "student", "other"}
         if v not in allowed:
             raise ValueError(f"Occupation must be one of {allowed}")
         return v
