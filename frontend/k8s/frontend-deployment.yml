@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: endouwashere/ds-frontend-service:17.0
+          image: endouwashere/ds-frontend-service:18.0
           ports:
             - containerPort: 80
           env:

@@ -15,7 +15,7 @@ const DashboardPage = ({ user }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const wsUrl = "ws://localhost:8002/ws";
+    const wsUrl = "ws://localhost:8082/ws";
     const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
