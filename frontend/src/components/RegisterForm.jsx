@@ -49,7 +49,6 @@ const RegisterForm = ({ setUser }) => {
         });
       } else {
         const data = await response.json();
-        // On success, open modal with success message and navigate on OK
         setModal({
           open: true,
           message: "Registration successful! Press OK to confirm.",

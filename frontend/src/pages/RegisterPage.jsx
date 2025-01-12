@@ -3,10 +3,11 @@ import React from "react";
 import RegisterForm from "../components/RegisterForm";
 import { Link } from "react-router-dom";
 
-const RegisterPage = () => {
+const RegisterPage = ({ setUser }) => {
   return (
     <div>
-      <RegisterForm />
+      {/* Forward setUser to RegisterForm */}
+      <RegisterForm setUser={setUser} />
       <div className="link-container">
         <p>Already have an account?</p>
         <Link to="/login">Sign In</Link>

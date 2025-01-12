@@ -6,3 +6,6 @@ torch==2.4.1
 transformers==4.46.3
 redis
 motor
+uvicorn
+motor
+pymongo

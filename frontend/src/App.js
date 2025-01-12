@@ -1,3 +1,4 @@
+// src/App.js
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import React, { useState } from "react";
 import Header from "./components/Header";
@@ -17,7 +18,8 @@ function App() {
         {/* Pass setUser to LoginPage */}
         <Route path="/login" element={<LoginPage setUser={setUser} />} />
 
-        <Route path="/register" element={<RegisterPage />} />
+        {/* Pass setUser to RegisterPage */}
+        <Route path="/register" element={<RegisterPage setUser={setUser} />} />
 
         {/* Pass user to DashboardPage */}
         <Route

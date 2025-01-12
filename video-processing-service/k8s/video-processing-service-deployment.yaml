@@ -28,7 +28,7 @@ spec:
       # Main container
       containers:
       - name: video-processing-service
-        image: ryanjeffares/video-processing-service:1.0
+        image: endouwashere/ds-video-service:13.0
         ports:
           - containerPort: 8000
         env:

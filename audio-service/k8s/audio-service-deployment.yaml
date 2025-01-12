@@ -28,7 +28,7 @@ spec:
       # Main container
       containers:
       - name: fastapi
-        image: ryanjeffares/audio-service:1.0
+        image: endouwashere/ds-audio-service:5.0
         ports:
         - containerPort: 8000
         env:

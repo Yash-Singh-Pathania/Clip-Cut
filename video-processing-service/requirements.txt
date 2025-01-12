@@ -3,4 +3,8 @@ pydantic
 pydantic-settings
 python-dotenv
 motor
+fastapi
 requests
+uvicorn
+pymongo
+
