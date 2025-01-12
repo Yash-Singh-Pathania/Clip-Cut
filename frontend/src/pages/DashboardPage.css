@@ -1,26 +1,53 @@
-/* Dashboard Container and Layout */
+/* Dashboard Container (same as before) */
 .dashboard-container {
-    display: flex;
-    height: 100vh;
+    position: fixed !important;
+    top: 80px !important;
+    /* if you have a header, otherwise set top: 0 */
+    left: 0 !important;
+    width: 100vw !important;
+    height: calc(100vh - 80px) !important;
+
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
     font-family: Arial, sans-serif;
+    background: #ffffff;
 }
 
-/* Sidebar Styles */
+/* Main Dashboard on the LEFT */
+.main-dashboard {
+    order: 1;
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+
+    /* Center the drag/drop area */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Sidebar on the RIGHT */
 .video-sidebar {
+    order: 2;
     width: 250px;
     background: #f4f4f4;
     padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+
+    /* Let the content above auto-grow,
+     leaving the bottom for .logout-container */
+    display: flex;
+    flex-direction: column;
 }
 
-.video-sidebar h2 {
-    margin-top: 0;
-}
-
+/* Top area: user info */
 .user-info {
     display: flex;
     align-items: center;
-    margin-top: 20px;
+    margin-bottom: 1rem;
 }
 
 .user-icon {
@@ -32,12 +59,91 @@
     font-weight: bold;
 }
 
-/* Main Dashboard Styles */
-.main-dashboard {
+/* Videos list sits in the middle */
+.processed-list {
     flex-grow: 1;
-    padding: 20px;
+    /* let this area grow */
+    margin-top: 10px;
+    overflow-y: auto;
+    /* scroll if needed */
 }
 
+.processed-item {
+    background: #fdfdfd;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+}
+
+.processed-item h3 {
+    margin-top: 0;
+}
+
+.processed-message {
+    display: none !important;
+    /* hide 'onLoad=true' text if you wish */
+}
+
+/* Place the logout at the bottom of the sidebar */
+.logout-container {
+    margin-top: 1rem;
+    /* spacing from the videos */
+    padding-top: 1rem;
+    /* optional extra spacing */
+    border-top: 1px solid #ccc;
+    /* visually separate if desired */
+}
+
+/* The logout button */
+.logout-button {
+    width: 100%;
+    /* fill the sidebar width */
+    padding: 10px;
+    background-color: #000;
+    /* Apple-like dark color */
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+.logout-button:hover {
+    background-color: #333;
+}
+
+/* Download Buttons */
+.download-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.download-button {
+    background-color: #000;
+    /* dark color to match */
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 0.9rem;
+}
+
+.download-button:hover {
+    background-color: #333;
+}
+
+.transcript-download {
+    display: flex;
+    gap: 10px;
+}
+
+/* Drag & Drop Area */
 .drag-drop-area {
     border: 2px dashed #ccc;
     border-radius: 4px;
@@ -65,7 +171,7 @@ input[type="file"] {
     display: none;
 }
 
-/* Modal Overlay */
+/* Modal Overlay and Content (unchanged) */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -79,7 +185,6 @@ input[type="file"] {
     z-index: 1000;
 }
 
-/* Modal Content */
 .modal-content {
     background: #fff;
     padding: 20px;
@@ -90,7 +195,6 @@ input[type="file"] {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Modal Buttons */
 .modal-buttons {
     margin-top: 20px;
     display: flex;
@@ -105,14 +209,26 @@ input[type="file"] {
     cursor: pointer;
 }
 
-/* Primary (OK) Button */
 .modal-buttons button:first-child {
-    background-color: #007bff;
-    color: white;
+    background-color: #000;
+    color: #fff;
 }
 
-/* Secondary (Close) Button */
 .modal-buttons button:last-child {
     background-color: #6c757d;
-    color: white;
+    color: #fff;
+}
+
+/* Download popup */
+.download-popup {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #333;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    z-index: 1001;
+    font-size: 0.9rem;
+    opacity: 0.9;
 }
