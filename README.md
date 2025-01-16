@@ -1,14 +1,6 @@
-# COMP41720 Group Project - Latecomers - "Clip Cut" Video Streaming Service
+"Clip Cut" Video Streaming Service
 
 A distributed and scalable video streaming service. Users can create accounts, upload videos, and stream videos with a desired quality as well as automatically generated subtitles. The service runs in a Kubernetes cluster to ensure scalability and fault-tolerance. It employs a microservice architecture with the various services written in Python, mostly with FastAPI, communicating with either REST or Redis pub/sub channels, and a React frontend.
-
-## Members
-
-* Ryan Jeffares 23201777
-* Yash Singh Pathania 24204265
-* Euan Leith 24108821
-* Nishal Koshy Philip 24241487
-* Sinem Taşkın 24283182
 
 ## Running
 TLDR : if you have docker and minikube 
