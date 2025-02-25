@@ -1,4 +1,7 @@
+
+
 "Clip Cut" Video Streaming Service
+Check out the tech emo here : https://www.youtube.com/watch?v=ZEbcFXgoI5Q 
 
 A distributed and scalable video streaming service. Users can create accounts, upload videos, and stream videos with a desired quality as well as automatically generated subtitles. The service runs in a Kubernetes cluster to ensure scalability and fault-tolerance. It employs a microservice architecture with the various services written in Python, mostly with FastAPI, communicating with either REST or Redis pub/sub channels, and a React frontend.
 
